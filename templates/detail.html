@@ -57,9 +57,16 @@ plant's name.
     <section id="harvest-history">
         <h3>Harvest History</h3>
 
-        {% for harvest in harvests %}
-        <li>{{ harvest['date'] }}: Harvested {{ harvest['quantity'] }} {{ plant['name'] }}</li>
-        {% endfor %}
+        {% if harvests %}
+        <ul>
+            {% for harvest in harvests %}
+            <li>{{ harvest['date'] }}: Harvested {{ harvest['quantity'] }} of {{ plant['name'] }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No harvest records yet. Add your first harvest above!</p>
+        {% endif %}
+
     </section>
 
     <form action="{{ url_for('delete', plant_id=plant['_id']) }}" method='POST' id="delete-form"
