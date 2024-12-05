@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, abort
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 
@@ -46,7 +46,8 @@ def create():
             'name': request.form.get('plant_name'),
             'variety': request.form.get('variety'),
             'photo_url': request.form.get('photo'),
-            'date_planted': request.form.get('date_planted')
+            'date_planted': request.form.get('date_planted'),
+            'color': request.form.get('color')
         }
         # TODO: Make an `insert_one` database call to insert the object into the
         # database's `plants` collection, and get its inserted id. Pass the
@@ -67,6 +68,9 @@ def detail(plant_id):
     # plant from the database, whose id matches the id passed in via the URL.
     plant_to_show = mongo.db.plants.find_one({"_id": ObjectId(plant_id)})
 
+    if not plant_to_show:
+        abort(404)
+
     # TODO: Use the `find` database operation to find all harvests for the
     # plant's id.
     # HINT: This query should be on the `harvests` collection, not the `plants`
@@ -78,6 +82,12 @@ def detail(plant_id):
         'harvests': harvests
     }
     return render_template('detail.html', **context)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    """Custom 404 page."""
+    return render_template('404.html'), 404
 
 
 @app.route('/harvest/<plant_id>', methods=['POST'])
@@ -111,7 +121,8 @@ def edit(plant_id):
             'name': request.form.get('plant_name'),
             'variety': request.form.get('variety'),
             'photo_url': request.form.get('photo'),
-            'date_planted': request.form.get('date_planted')
+            'date_planted': request.form.get('date_planted'),
+            'color': request.form.get('color')
         }
 
         mongo.db.plants.update_one(

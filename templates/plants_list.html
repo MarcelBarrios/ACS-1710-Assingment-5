@@ -26,6 +26,7 @@
                     <a href="{{ url_for('detail', plant_id=plant['_id']) }}">
                         {{ plant['name'] }}
                     </a>
+                    <p>Color: {{ plant['color']}}</p>
                 </div>
             </div>
             {% endfor %}
